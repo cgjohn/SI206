@@ -74,10 +74,10 @@ content = [x.strip() for x in content]
 
 file_paths_num = 0
 
-# for each in content:
-#     match = re.search('\.\w', each)
-#     if match: 
-#         file_paths_num += 1
+for each in content:
+    match = re.search('\.\w', each)
+    if match: 
+        file_paths_num += 1
 
 full_paths_num = 0
 
