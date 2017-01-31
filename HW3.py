@@ -72,8 +72,22 @@ with open('computer_paths.txt') as f:
 content = [x.strip() for x in content] 
 # print(content)
 
+file_paths_num = 0
+
+# for each in content:
+#     match = re.search('\.\w', each)
+#     if match: 
+#         file_paths_num += 1
+
+full_paths_num = 0
+
+for each in content:
+    match = re.search('^/|^~', each)
+    if match: 
+        full_paths_num += 1
 
 python_course_paths = 0
+
 for each in content:
     match = re.search('SI206[/]\S*[py]', each)
     if match: 
