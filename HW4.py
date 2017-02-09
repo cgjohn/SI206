@@ -5,8 +5,8 @@ from bs4 import BeautifulSoup
 
 ## SI 206 - W17 - HW4
 ## COMMENT WITH:
-## Your section day/time:
-## Any names of people you worked with on this assignment:
+## Your section day/time: Section 001 TuThurs 8:30 - 10
+## Any names of people you worked with on this assignment: Connor Johnston
 
 #####################
 
@@ -14,8 +14,15 @@ from bs4 import BeautifulSoup
 
 ## Write the Python code to do so here.
 
+r = requests.get('http://www.nytimes.com')
 
+data = r.text
 
+f = open('nytimes_data.html', 'w')
+
+for line in data:
+	f.write(line)
+f.close()
 
 #####################
 
@@ -41,9 +48,21 @@ from bs4 import BeautifulSoup
 ## Write your code to complete this task here.
 ## HINT: Remember that you'll need to open the file you created in Part 1, read the contets into one big string, and make a BeautifulSoup object out of that string!
 ## NOTE that the provided link does not include saving the online data in a file as part of the process. But it still provides very useful hints/tricks about how to look for and identify the headlines on the NY Times page.
+nytimes_headlines = []
+headlines = []
 
+f = open('nytimes_data.html', 'r')
 
+soup = BeautifulSoup(f, 'html.parser')
 
+headlines = soup.find_all('h2', {"class": "story-heading"})
+i = 0
+for story_heading in headlines:
+	if i < 10:
+		nytimes_headlines.append(story_heading.text)
+		i = i + 1
+	else:
+		break
 
 #####################
 
@@ -68,22 +87,21 @@ htmldoc = response.text
 soup = BeautifulSoup(htmldoc,"html.parser")
 people = soup.find_all("div",{"class":"views-row"})
 umsi_titles = {}
-
 ## It may be helpful to translate the following from English to code:
-
+print(len(people))
+count = 0;
 ## For each element in the list saved in the variable people,
 ## Find the container that holds the name that belongs to that person (HINT: look for something unique, like a property element...)
+for row in people:
+	name = row.find(property="dc:title")
 ## Find the container that holds the title that belongs to that person (HINT: a class name)
+	title = row.find("div", attrs={'class' : 'field-name-field-person-titles'})
 ## Grab the text of each of those elements and put them in the dictionary umsi_titles properly
+	umsi_titles[name.text] = title.text
+	name = None
+	title = None
 
-
-
-
-
-
-
-
-
+# print((umsi_titles))
 
 ######### UNIT TESTS; DO NOT CHANGE ANY CODE BELOW THIS LINE #########
 #### NOTE: hard-coding to pass any of these tests w/o following assignment instructions is not acceptable for points
