@@ -5,7 +5,7 @@ from bs4 import BeautifulSoup
 
 ## SI 206 - W17 - HW4
 ## COMMENT WITH:
-## Your section day/time: Section 001 TuThurs 8:30 - 10
+## Your section day/time: Section 003 Thurs 6-7pm
 ## Any names of people you worked with on this assignment: Jonathan Bain
 
 #####################
@@ -60,8 +60,6 @@ headlines = soup.find_all('h2', {"class": "story-heading"})
 for i in range(0, 10):
 	if i < 10:
 		nytimes_headlines.append(headlines[i].text)
-	else:
-		break
 
 #####################
 
