@@ -1,8 +1,8 @@
 ## SI 206 W17 - Project 2 
 
 ## COMMENT HERE WITH:
-## Your name:
-## Anyone you worked with on this project:
+## Your name: Connor Johnston
+## Anyone you worked with on this project: Jonathan Bain
 
 ## Below we have provided import statements, comments to separate out 
 #the parts of the project, 
@@ -162,11 +162,11 @@ five_tweets = get_five_tweets("University of Michigan")
 # in Part 1 on each element of the list, and accumulate a new list of each of the total URLs in all five 
 # of those tweets in a variable called tweet_urls_found. 
 
-tweet_urls_found = []
+tweet_urls_found = ()
 for tweet in five_tweets:
 	URL = (find_urls(tweet))
 	if URL:
-		tweet_urls_found.append(URL)
+		tweet_urls_found = tweet_urls_found + tuple(URL) 
 
 
 ########### TESTS; DO NOT CHANGE ANY CODE BELOW THIS LINE! ###########
