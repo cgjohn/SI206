@@ -90,15 +90,22 @@ def find_urls(inp):
 
 
 def get_umsi_data():
-	if(False): #should check cached file for data 	
-		continue
+	formatted_key = "umsi_directory_data"
+	# if False:
+	# 	continue
+	if formatted_key in CACHE_DICTION:
+		htmlDoc = CACHE_DICTION[formatted_key]
 
 	else:
 		htmlDoc = []
 		for i in range(0, 12):
 			response = requests.get("https://www.si.umich.edu/directory?field_person_firstname_value=&field_person_lastname_value=&rid=All&page=" + str(i), headers={'User-Agent': 'SI_CLASS'})
 			htmlDoc.append(response.text)
-		return htmlDoc
+		CACHE_DICTION[formatted_key] = htmlDoc
+		cache_file = open(CACHE_FNAME, 'w', encoding = 'utf-8')
+		cache_file.write(json.dumps(CACHE_DICTION))
+		cache_file.close()	
+	return htmlDoc
 
 
 
@@ -152,8 +159,8 @@ def get_five_tweets(key):
 five_tweets = get_five_tweets("University of Michigan")
 
 ## PART 3 (c) - Iterate over the five_tweets list, invoke the find_urls function that you defined 
-#in Part 1 on each element of the list, and accumulate a new list of each of the total URLs in all five 
-#of those tweets in a variable called tweet_urls_found. 
+# in Part 1 on each element of the list, and accumulate a new list of each of the total URLs in all five 
+# of those tweets in a variable called tweet_urls_found. 
 
 tweet_urls_found = []
 for tweet in five_tweets:
