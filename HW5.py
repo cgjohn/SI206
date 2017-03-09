@@ -7,7 +7,7 @@ import twitter_info
 
 ## SI 206 - W17 - HW5
 ## COMMENT WITH:
-## Your section day/time: Thursday 6-7pm
+## Your section day/time: Thursday 6-7
 ## Any names of people you worked with on this assignment:
 
 ######## 500 points total ########
