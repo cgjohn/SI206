@@ -14,6 +14,12 @@ class Card(object):
 			self.rank = rank
 		self.rank_num = rank # To handle winning comparison 
 
+	def compare_rank(self, inp):
+	    if inp > self.rank_num:
+	        return True
+	    else:
+	        return False
+
 	def __str__(self):
 		return "{} of {}".format(self.rank,self.suit)
 
@@ -160,6 +166,10 @@ if __name__ == "__main__":
 	print(single_hand) # Print the hand to view it
 	print("\n\n\n") # Print new lines, just for clarity
 
+
+c = Card(2,11)
+print(c.compare_rank(4)) # should print False
+print(c.compare_rank(13))
 
 ########### TESTS SHOULD GO BELOW THIS LINE ###########
 
@@ -313,4 +323,5 @@ class HandClassTests(unittest.TestCase):
 
 #############
 
-unittest.main(verbosity=2) 
+#unittest.main(verbosity=2) 
+
