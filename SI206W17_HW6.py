@@ -102,7 +102,6 @@ student_tups_list = list(student_tups)
 
 ## You can test this out with any code you like here, and similar below other problems, but make sure to comment out any code that uses up the iterator in order to pass the tests!
     
-print(student_tups_list)
 
 ## [PROBLEM 5]
 print("\n\n***** Problem 5 *****")
@@ -141,7 +140,6 @@ print("\n\n***** Problem 7 *****")
 # so that all your tests can still pass and you avoid confusion!
 
 names_and_productivities = list(zip([x.name for x in programmers], prod_list))
-print(names_and_productivities)
 
 ## [PROBLEM 8]
 print("\n\n***** Problem 8 *****")
@@ -218,9 +216,9 @@ def main_filterer(inFiles):
 
 ## Uncomment this code to test so you can see easily what results from your code. DO uncomment it. 
 # DO NOT delete or change it. (You can add other code above while you work, of course.)
-provided_file_names = ["samplehw6_1.txt","samplehw6_2.txt"]
-for ln in main_filterer(provided_file_names):
-    print(ln.rstrip('\n'), end=" ")
+# provided_file_names = ["samplehw6_1.txt","samplehw6_2.txt"]
+# for ln in main_filterer(provided_file_names):
+#     print(ln.rstrip('\n'), end=" ")
 #####
 
 
