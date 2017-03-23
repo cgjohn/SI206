@@ -56,7 +56,22 @@ except:
 # Note that this is a lot like work you have done already in class (but, depending upon what you did previously, may not be EXACTLY the same, so be careful your code does exactly what you want here).
 
 
+def get_user_tweets(key):
+	formatted_key = "twitter_{}".format(key)
+	if formatted_key in CACHE_DICTION:
+		response_list = CACHE_DICTION[formatted_key]
+	else:
+		response =  api.user_timeline(screen_name=key, include_rts=True, count=10)
+		response = response["statuses"]
+		CACHE_DICTION[formatted_key] = response
+		cache_file = open(CACHE_FNAME, 'w', encoding = 'utf-8')
+		cache_file.write(json.dumps(CACHE_DICTION))
+		cache_file.close()
+		response_list = []
+		for r in response:
+			response_list.append(r)
 
+	return response_list
 
 
 # Write code to create/build a connection to a database: tweets.db,
@@ -70,17 +85,33 @@ except:
 
 # Below we have provided interim outline suggestions for what to do, sequentially, in comments.
 
+
 # Make a connection to a new database tweets.db, and create a variable to hold the database cursor.
 
 
 # Write code to drop the Tweets table if it exists, and create the table (so you can run the program over and over), with the correct (4) column names and appropriate types for each.
 # HINT: Remember that the time_posted column should be the TIMESTAMP data type!
 
+conn = sqlite3.connect('tweets.db')
+cur = conn.cursor()
+
+cur.execute('DROP TABLE IF EXISTS Tracks')
+cur.execute('CREATE TABLE Tracks (tweet_id INTEGER PIMARY KEY, author TEXT, time_posted TIMESTAMP, tweet_text TEXT, retweets INTEGER)')
+
 
 # Invoke the function you defined above to get a list that represents a bunch of tweets from the UMSI timeline. Save those tweets in a variable called umsi_tweets.
 
 
+umsi_tweets = get_user_tweets('umsi')
 
+# for tweet in umsi_tweets:
+# 	for key in tweet:
+# 		print(key)
+# 		print(tweet[key])
+# 		print("")
+# 	print("")
+# 	# print(tweet['text'])
+# 	print("")
 
 # Use a for loop, the cursor you defined above to execute INSERT statements, that insert the data from each of the tweets in umsi_tweets into the correct columns in each row of the Tweets database table.
 
