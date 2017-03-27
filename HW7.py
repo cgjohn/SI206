@@ -61,7 +61,7 @@ def get_user_tweets(key):
 	if formatted_key in CACHE_DICTION:
 		response_list = CACHE_DICTION[formatted_key]
 	else:
-		response =  api.user_timeline(screen_name=key, include_rts=True, count=10)
+		response =  api.user_timeline(screen_name=key, include_rts=True, count=20)
 		response = response["statuses"]
 		CACHE_DICTION[formatted_key] = response
 		cache_file = open(CACHE_FNAME, 'w', encoding = 'utf-8')
@@ -95,8 +95,8 @@ def get_user_tweets(key):
 conn = sqlite3.connect('tweets.db')
 cur = conn.cursor()
 
-cur.execute('DROP TABLE IF EXISTS Tracks')
-cur.execute('CREATE TABLE Tracks (tweet_id INTEGER PIMARY KEY, author TEXT, time_posted TIMESTAMP, tweet_text TEXT, retweets INTEGER)')
+cur.execute('DROP TABLE IF EXISTS Tweets')
+cur.execute('CREATE TABLE Tweets (tweet_id INTEGER PIMARY KEY, author TEXT, time_posted TIMESTAMP, tweet_text TEXT, retweets INTEGER)')
 
 
 # Invoke the function you defined above to get a list that represents a bunch of tweets from the UMSI timeline. Save those tweets in a variable called umsi_tweets.
@@ -104,25 +104,35 @@ cur.execute('CREATE TABLE Tracks (tweet_id INTEGER PIMARY KEY, author TEXT, time
 
 umsi_tweets = get_user_tweets('umsi')
 
-# for tweet in umsi_tweets:
-# 	for key in tweet:
-# 		print(key)
-# 		print(tweet[key])
-# 		print("")
-# 	print("")
-# 	# print(tweet['text'])
-# 	print("")
 
 # Use a for loop, the cursor you defined above to execute INSERT statements, that insert the data from each of the tweets in umsi_tweets into the correct columns in each row of the Tweets database table.
 
 # (You should do nested data investigation on the umsi_tweets value to figure out how to pull out the data correctly!)
 
+id_list = []
+author_list =[]
+times_posted = []
+text_list = []
+retweet_list = []
+
+for tweet in umsi_tweets:
+	id_list.append(tweet['id'])
+	author_list.append(tweet['user']['screen_name'])
+	times_posted.append(tweet['created_at'])
+	text_list.append(tweet['text'])
+	retweet_list.append(tweet['retweet_count'])
 
 
 
+tups = list(zip(id_list, author_list, times_posted, text_list, retweet_list))
+
+
+statement = 'INSERT INTO Tweets VALUES (?, ?, ?, ?, ?)'
+for tup in tups:
+	cur.execute(statement, tup)
 # Use the database connection to commit the changes to the database
 
-
+conn.commit()
 
 # You can check out whether it worked in the SQLite browser! (And with the tests.)
 
@@ -136,22 +146,27 @@ umsi_tweets = get_user_tweets('umsi')
 
 # Select from the database all of the TIMES the tweets you collected were posted and fetch all the tuples that contain them in to the variable tweet_posted_times.
 
+query = 'SELECT time_posted FROM Tweets'
+tweet_posted_times = list(cur.execute(query))
 
 # Select all of the tweets (the full rows/tuples of information) that have been retweeted MORE than 2 times, and fetch them into the variable more_than_2_rts.
 
-
+query = 'SELECT * FROM Tweets WHERE retweets > 2'
+more_than_2_rts = list(cur.execute(query))
 
 # Select all of the TEXT values of the tweets that are retweets of another account (i.e. have "RT" at the beginning of the tweet text). Save the FIRST ONE from that group of text values in the variable first_rt. Note that first_rt should contain a single string value, not a tuple.
 
-
+query = 'SELECT tweet_text FROM Tweets WHERE tweet_text LIKE "RT%"'
+rts = list(cur.execute(query))
+first_rt = str(rts[0][0])
 
 # Finally, done with database stuff for a bit: write a line of code to close the cursor to the database.
 
-
+conn.close()
 
 ## [PART 3] - Processing data
 
-# Define a function get_twitter_users that accepts a string as in put and returns a SET of the _twitter screennames_ of each twitter user who was mentioned in that string. 
+# Define a function get_twitter_users that accepts a string as input and returns a SET of the _twitter screennames_ of each twitter user who was mentioned in that string. 
 
 # Note that the syntax for mentions in a tweet is that the username is preceded by an "@" character, e.g. "@umsi" or "@aadl", and cannot contain any punctuation besides underscores -- that's how to determine what user names are mentioned. (e.g. @hello? is just the username "hello", but @programmer_at_umsi is "programmer_at_umsi"). 
 
@@ -162,9 +177,6 @@ umsi_tweets = get_user_tweets('umsi')
 # Also note that the SET type is what this function should return, NOT a list or tuple. We looked at very briefly at sets when we looked at set comprehensions last week. In a Python 3 set, which is a special data type, it's a lot like a combination of a list and a dictionary: no key-value pairs, BUT each element in a set is by definition unique. You can't have duplicates.
 
 # If you want to challenge yourself here -- this function definition (what goes under the def statement) CAN be written in one line! Definitely, definitely fine to write it with multiple lines, too, which will be much easier and clearer.
-
-
-
 
 
 #########
@@ -212,7 +224,6 @@ class PartThree(unittest.TestCase):
 		self.assertEqual(get_twitter_users("@twitter_user_4, what did you think of the comment by @twitteruser5?"),{'twitter_user_4', 'twitteruser5'})
 	def test4(self):
 		self.assertEqual(get_twitter_users("hey @umich, @aadl is pretty great, huh? @student1 @student2"),{'aadl', 'student2', 'student1', 'umich'})
-
 
 if __name__ == "__main__":
 	unittest.main(verbosity=2)
