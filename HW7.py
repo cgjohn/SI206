@@ -61,8 +61,7 @@ def get_user_tweets(key):
 	if formatted_key in CACHE_DICTION:
 		response_list = CACHE_DICTION[formatted_key]
 	else:
-		response =  api.user_timeline(screen_name=key, include_rts=True, count=20)
-		response = response["statuses"]
+		response = api.user_timeline(screen_name=key, include_rts=True, count=20)
 		CACHE_DICTION[formatted_key] = response
 		cache_file = open(CACHE_FNAME, 'w', encoding = 'utf-8')
 		cache_file.write(json.dumps(CACHE_DICTION))
@@ -96,7 +95,7 @@ conn = sqlite3.connect('tweets.db')
 cur = conn.cursor()
 
 cur.execute('DROP TABLE IF EXISTS Tweets')
-cur.execute('CREATE TABLE Tweets (tweet_id INTEGER PIMARY KEY, author TEXT, time_posted TIMESTAMP, tweet_text TEXT, retweets INTEGER)')
+cur.execute('CREATE TABLE Tweets (tweet_id INTEGER PRIMARY KEY, author TEXT, time_posted TIMESTAMP, tweet_text TEXT, retweets INTEGER)')
 
 
 # Invoke the function you defined above to get a list that represents a bunch of tweets from the UMSI timeline. Save those tweets in a variable called umsi_tweets.
@@ -127,9 +126,9 @@ for tweet in umsi_tweets:
 tups = list(zip(id_list, author_list, times_posted, text_list, retweet_list))
 
 
-statement = 'INSERT INTO Tweets VALUES (?, ?, ?, ?, ?)'
+executable = 'INSERT INTO Tweets VALUES (?, ?, ?, ?, ?)'
 for tup in tups:
-	cur.execute(statement, tup)
+	cur.execute(executable, tup)
 # Use the database connection to commit the changes to the database
 
 conn.commit()
