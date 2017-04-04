@@ -129,30 +129,37 @@ cur.execute('CREATE TABLE Users(user_id TEXT PRIMARY KEY, screen_name TEXT, num_
 ## You should load into the Tweets table:  # Info about all the tweets (at least
 ## 20) that you gather from the umich timeline. # NOTE: Be careful that you have
 ## the correct user ID reference in the user_id column! See below hints.
-ex = 'INSERT INTO Tweets VALUES (?, ?, ?, ?, ?)'
-for tweet in umich_tweets:
-	tups = (tweet['id_str'], tweet['text'], tweet['user']['id_str'], tweet['created_at'], tweet['retweet_count'])
 
-	cur.execute(ex, tups)
-conn.commit();
 
+# print (usernames)
 usernames = []
 mentions = [tweet['entities']['user_mentions'] for tweet in umich_tweets]
 for mention in mentions:
 	for m in mention:
 		usernames.append(m['screen_name'])
 
-# print (usernames)
-
 userEx = 'INSERT INTO Users VALUES (?, ?, ?, ?)'
 
+userIds = []
 uniqueUsers = []
 for user in usernames:
+	inputs = api.get_user(screen_name = user)
+	userIds.append(inputs['id'])
 	if user not in uniqueUsers:
-		inputs = api.get_user(screen_name = user)
 		userTup = (inputs['id'], inputs['screen_name'], inputs['favourites_count'], inputs['description'])
 		cur.execute(userEx, userTup)
 		uniqueUsers.append(user)
+
+ex = 'INSERT INTO Tweets VALUES (?, ?, ?, ?, ?)'
+count = 0
+for tweet in umich_tweets:
+	print(tweet['user']['id_str'])
+	tups = (tweet['id_str'], tweet['text'], userIds[count], tweet['created_at'], tweet['retweet_count'])
+	count = count + 1
+	cur.execute(ex, tups)
+conn.commit();
+
+
 
 conn.commit()
 
@@ -216,7 +223,8 @@ descriptions_fav_users = [str(de) for de in users_descr]
 # each tuple: the user screenname and the text of the tweet -- for each tweet
 # that has been retweeted more than 50 times. Save the resulting list of tuples
 # in a variable called joined_result.
-cur.execute('SELECT Users.screen_name, Tweets.text FROM Users INNER JOIN Tweets ON Users.user_id = Tweets.user_id WHERE Tweets.retweets > 5')
+query = "SELECT screen_name, Tweets.text FROM Users INNER JOIN Tweets ON Tweets.user_id = Users.user_id WHERE Tweets.retweets > 10"
+cur.execute(query)
 joined_result = cur.fetchall()
 
 
@@ -256,16 +264,25 @@ most_common_char = count.most_common(1)[0][0]
 ## the collections library, a dictionary comprehension, list comprehension(s). Y #
 ## You should save the final dictionary in a variable called twitter_info_diction.
 
-cur.execute('SELECT Users.screen_name, Tweets.text FROM Users INNER JOIN Tweets ON Users.user_id = Tweets.user_id')
+cur.execute('SELECT Users.screen_name, Tweets.text FROM Users INNER JOIN Tweets ON Users.user_id = Tweets.user_id WHERE Tweets.retweets > 5')
 result = cur.fetchall()
-# print(result)
+print(result)
+
+print(joined_result)
 
 
 
-twitter_info_diction = collections.defaultdict(list)
+diction = collections.defaultdict(list)
+
 for tweet in result:
-	twitter_info_diction[tweet[0]].append(tweet[1])
-twitter_info_diction = dict(twitter_info_diction)
+	diction[tweet[0]].append(tweet[1])
+
+# diction = dict(diction)
+# print("length = " + str(len(diction)))
+# for key in diction:
+# 	print(key + " " + diction[key])
+
+twitter_info_diction = dict(diction)
 
 
 
