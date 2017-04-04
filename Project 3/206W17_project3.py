@@ -153,13 +153,9 @@ for user in usernames:
 ex = 'INSERT INTO Tweets VALUES (?, ?, ?, ?, ?)'
 count = 0
 for tweet in umich_tweets:
-	print(tweet['user']['id_str'])
 	tups = (tweet['id_str'], tweet['text'], userIds[count], tweet['created_at'], tweet['retweet_count'])
 	count = count + 1
 	cur.execute(ex, tups)
-conn.commit();
-
-
 
 conn.commit()
 
@@ -264,11 +260,11 @@ most_common_char = count.most_common(1)[0][0]
 ## the collections library, a dictionary comprehension, list comprehension(s). Y #
 ## You should save the final dictionary in a variable called twitter_info_diction.
 
-cur.execute('SELECT Users.screen_name, Tweets.text FROM Users INNER JOIN Tweets ON Users.user_id = Tweets.user_id WHERE Tweets.retweets > 5')
+cur.execute('SELECT Users.screen_name, Tweets.text FROM Users INNER JOIN Tweets ON Users.user_id = Tweets.user_id')
 result = cur.fetchall()
-print(result)
+# print(result)
 
-print(joined_result)
+# print(joined_result)
 
 
 
