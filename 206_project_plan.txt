@@ -1,0 +1,231 @@
+{\rtf1\ansi\ansicpg1252\cocoartf1504\cocoasubrtf810
+{\fonttbl\f0\fnil\fcharset0 HelveticaNeue;\f1\fnil\fcharset0 Menlo-Regular;\f2\fnil\fcharset0 HelveticaNeue-Bold;
+}
+{\colortbl;\red255\green255\blue255;\red53\green53\blue53;}
+{\*\expandedcolortbl;;\cssrgb\c27059\c27059\c27059;}
+{\*\listtable{\list\listtemplateid1\listhybrid{\listlevel\levelnfc23\levelnfcn23\leveljc0\leveljcn0\levelfollow0\levelstartat1\levelspace360\levelindent0{\*\levelmarker \{disc\}}{\leveltext\leveltemplateid1\'01\uc0\u8226 ;}{\levelnumbers;}\fi-360\li720\lin720 }{\listlevel\levelnfc23\levelnfcn23\leveljc0\leveljcn0\levelfollow0\levelstartat1\levelspace360\levelindent0{\*\levelmarker \{disc\}}{\leveltext\leveltemplateid2\'01\uc0\u8226 ;}{\levelnumbers;}\fi-360\li1440\lin1440 }{\listlevel\levelnfc23\levelnfcn23\leveljc0\leveljcn0\levelfollow0\levelstartat1\levelspace360\levelindent0{\*\levelmarker \{disc\}}{\leveltext\leveltemplateid3\'01\uc0\u8226 ;}{\levelnumbers;}\fi-360\li2160\lin2160 }{\listname ;}\listid1}
+{\list\listtemplateid2\listhybrid{\listlevel\levelnfc23\levelnfcn23\leveljc0\leveljcn0\levelfollow0\levelstartat1\levelspace360\levelindent0{\*\levelmarker \{hyphen\}}{\leveltext\leveltemplateid101\'01\uc0\u8259 ;}{\levelnumbers;}\fi-360\li720\lin720 }{\listname ;}\listid2}}
+{\*\listoverridetable{\listoverride\listid1\listoverridecount0\ls1}{\listoverride\listid2\listoverridecount0\ls2}}
+\margl1440\margr1440\vieww10800\viewh8400\viewkind0
+\deftab560
+\pard\pardeftab560\slleading20\pardirnatural\partightenfactor0
+
+\f0\fs24 \cf2 SI 206 W17\
+Put your name here: Connor Johnston\
+\
+----\
+\
+Which option for the final project are you choosing -- 1, 2, or 3?\
+\
+2\
+\
+IF YOU ARE CHOOSING OPTION 3, answer the following questions:\
+\
+* Write 1-3 sentences summarizing what the goal of your project is:\
+\
+\
+* What are your two data sources? Provide links to documentation or websites you will be getting data from.\
+\
+\
+* Why are you proposing this project?\
+\
+\
+* What will the output of this project be? What will it look like, and what information will it contain?\
+\
+\
+* What are your concerns about this proposal?\
+\
+\
+-----\
+\
+THE FOLLOWING QUESTIONS ARE FOR EVERYONE. (Though they may be easier if you are choosing Option 1 or 2, because you can reference the Option 1 or 2 instructions.)\
+\
+* What will at least one of the classes you're going to define be called?\
+\
+Movie\
+\
+* What will that class take as input to its constructor?\
+\
+\pard\pardeftab560\slleading20\partightenfactor0
+\cf2 Title, director, rating, actors, num_langs, \
+\pard\pardeftab560\slleading20\pardirnatural\partightenfactor0
+\cf2 \
+* What will 1 instance of this class represent?\
+\
+\pard\pardeftab560\slleading20\partightenfactor0
+\cf2 A movie\
+\pard\pardeftab560\slleading20\pardirnatural\partightenfactor0
+\cf2 \
+* What are 3 instance variables this class will have? What will they be called, and what information will they hold? Why are they important?\
+\
+\pard\pardeftab560\slleading20\partightenfactor0
+\cf2 Title - has the title of the movie - helps identify the movie\
+Rating - has the overall rating of the movie - good to compare how popular the movie is\
+Actors - Contains a list of all major actors in the movie - can be used to see if there are trends between actors\
+\pard\pardeftab560\slleading20\pardirnatural\partightenfactor0
+\cf2 \
+* Explain 2 methods the class will have that are not the class constructor (__init__ method) by answering the following questions for each. \
+ONE METHOD:\
+- What will the name of the method be?\
+\
+\pard\pardeftab560\slleading20\partightenfactor0
+\cf2 __str__ \
+\
+\pard\pardeftab560\slleading20\pardirnatural\partightenfactor0
+\cf2 - What will the method do?\
+\
+\pard\pardeftab560\slleading20\partightenfactor0
+\cf2 The method will print out the movie with its title and director\
+\pard\pardeftab560\slleading20\pardirnatural\partightenfactor0
+\cf2 \
+- Will it take any additional input? \
+\
+\pard\pardeftab560\slleading20\partightenfactor0
+\cf2 No\
+\pard\pardeftab560\slleading20\pardirnatural\partightenfactor0
+\cf2 \
+- Will it return anything? Should it change anything about the instance/an instance variable? \
+\
+\pard\pardeftab560\slleading20\partightenfactor0
+\cf2 no\
+\pard\pardeftab560\slleading20\pardirnatural\partightenfactor0
+\cf2 \
+- Why is it useful for this class definition, in this program?\
+\
+\pard\pardeftab560\slleading20\partightenfactor0
+\cf2 It is useful to show what movie is being referenced.\
+\pard\pardeftab560\slleading20\pardirnatural\partightenfactor0
+\cf2 \
+ANOTHER METHOD:\
+- What will the name of the method be?\
+\
+\
+- What will the method do?\
+\
+\
+- Will it take any additional input? \
+\
+\
+- Will it return anything? Should it change anything about the instance/an instance variable? \
+\
+\
+- Why is it useful for this class definition, in this program?\
+\
+\
+[If you definitely want to have a third, feel free to answer those questions a third time, because you'll have to do so eventually. when you write documentation!]\
+\
+\
+* What will the tables in your database be?\
+\
+\pard\pardeftab560\slleading20\partightenfactor0
+\cf2 Tweets, Users, Movies\
+\pard\pardeftab560\slleading20\pardirnatural\partightenfactor0
+\cf2 \
+\
+\
+* What fields will each database table have? Which field of them is the primary key? You should list the fields for each database table here, e.g.\
+Tweets:\
+- text ... \
+(etc.)\
+\
+\pard\pardeftab560\pardirnatural\partightenfactor0
+\ls1\ilvl1
+\f1\fs20 \cf2 {\listtext	\'95	}
+\f2\b\fs24 Your Tweets table should hold in each row:\uc0\u8232 \
+\pard\pardeftab560\pardirnatural\partightenfactor0
+\ls1\ilvl2
+\f1\b0\fs20 \cf2 {\listtext	\'95	}
+\f0\fs24 Tweet text\uc0\u8232 \
+\ls1\ilvl2
+\f1\fs20 {\listtext	\'95	}
+\f0\fs24 Tweet ID (primary key)\uc0\u8232 \
+\ls1\ilvl2
+\f1\fs20 {\listtext	\'95	}
+\f0\fs24 The user who posted the tweet (represented by a reference to the users table)\uc0\u8232 \
+\ls1\ilvl2
+\f1\fs20 {\listtext	\'95	}
+\f0\fs24 The movie search this tweet came from (represented by a reference to the movies table)\uc0\u8232 \
+\ls1\ilvl2
+\f1\fs20 {\listtext	\'95	}
+\f0\fs24 Number favorites\uc0\u8232 \
+\ls1\ilvl2
+\f1\fs20 {\listtext	\'95	}
+\f0\fs24 Number retweets\uc0\u8232 \
+\pard\pardeftab560\pardirnatural\partightenfactor0
+\ls1\ilvl1
+\f1\fs20 \cf2 {\listtext	\'95	}
+\f2\b\fs24 Your Users table should hold in each row:\uc0\u8232 \
+\pard\pardeftab560\pardirnatural\partightenfactor0
+\ls1\ilvl2
+\f1\b0\fs20 \cf2 {\listtext	\'95	}
+\f0\fs24 User ID (primary key)\uc0\u8232 \
+\ls1\ilvl2
+\f1\fs20 {\listtext	\'95	}
+\f0\fs24 User screen name\uc0\u8232 \
+\ls1\ilvl2
+\f1\fs20 {\listtext	\'95	}
+\f0\fs24 Number of favorites that user has ever made\uc0\u8232 \
+\ls1\ilvl2
+\f1\fs20 {\listtext	\'95	}
+\f0\fs24 Any other information you want to deal with or find interesting\'85\uc0\u8232 \
+\pard\pardeftab560\pardirnatural\partightenfactor0
+\ls1\ilvl1
+\f1\fs20 \cf2 {\listtext	\'95	}
+\f2\b\fs24 Your Movies table should hold in each row:\uc0\u8232 \
+\pard\pardeftab560\pardirnatural\partightenfactor0
+\ls1\ilvl2
+\f1\b0\fs20 \cf2 {\listtext	\'95	}
+\f0\fs24 ID (primary key) (NOTE title is dangerous for a primary key, 2 movies could have the same title!)\uc0\u8232 \
+\ls1\ilvl2
+\f1\fs20 {\listtext	\'95	}
+\f0\fs24 Title of the movie\uc0\u8232 \
+\ls1\ilvl2
+\f1\fs20 {\listtext	\'95	}
+\f0\fs24 Director of the movie \uc0\u8232 \
+\ls1\ilvl2
+\f1\fs20 {\listtext	\'95	}
+\f0\fs24 Number of languages the movie has\uc0\u8232 \
+\ls1\ilvl2
+\f1\fs20 {\listtext	\'95	}
+\f0\fs24 IMDB rating of the movie\uc0\u8232 \
+\ls1\ilvl2
+\f1\fs20 {\listtext	\'95	}
+\f0\fs24 The top billed (first in the list) actor in the movie\uc0\u8232 \
+\pard\pardeftab560\slleading20\pardirnatural\partightenfactor0
+\cf2 \
+\
+\
+* List, in English, 2 queries you'll want to make from your database. At least one should be a JOIN. You can always change these later, but start with  ideas you're interested in and lessen the work on yourself later on! \
+(e.g. from class examples, maybe "I want to make a query that accesses the numbers of times each user has favorited tweets, and the number of times tweets that user posted have been favorited -- so I'll be joining the Tweets table and the Users table")\
+\
+\pard\pardeftab560\pardirnatural\partightenfactor0
+\ls2\ilvl0\cf2 {\listtext	\uc0\u8259 	}A query that accesses the the Movies and tweets databases to see which movie has the longest average tweet.\
+{\listtext	\uc0\u8259 	}A query to get all tweets so I can find how many individual words are said\
+\pard\pardeftab560\slleading20\pardirnatural\partightenfactor0
+\cf2 \
+\
+\
+* What are at least 2 of the data processing mechanics you're planning to use? \
+\
+\pard\pardeftab560\slleading20\partightenfactor0
+\cf2 Set Comprehension and a dictionary comprehension\
+\pard\pardeftab560\slleading20\pardirnatural\partightenfactor0
+\cf2 \
+\
+* Why will each of those be useful to you? What data might you use it on? \
+(e.g. "Set comprehension: I think I'm going to be looking for unique names and proper nouns in this big set of text, so I'm going to use a set comprehension"). \
+>>>This is especially important if you are doing Option 3, but it's important for everyone!<<<\
+\
+\pard\pardeftab560\slleading20\partightenfactor0
+\cf2 The set comprehension will be useful for finding all of the individual words in the tweets and the dictionary comprehension will be good to combine the movies and tweets databases to see the relationships.\
+\pard\pardeftab560\slleading20\pardirnatural\partightenfactor0
+\cf2 \
+\
+\
+* What will your output look like? Will it be a .txt file? a CSV file? something else? What information will it contain? >>>This is especially important if you are doing Option 3, but it's important for everyone!<<<\
+\
+\pard\pardeftab560\slleading20\partightenfactor0
+\cf2 a text file -- That will contain the most common word in the tweets, the movies I chose, and most common actors and other information I find.\
+\pard\pardeftab560\slleading20\pardirnatural\partightenfactor0
+\cf2 \
+}

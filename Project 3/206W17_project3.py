@@ -151,13 +151,15 @@ for user in usernames:
 		uniqueUsers.append(user)
 
 ex = 'INSERT INTO Tweets VALUES (?, ?, ?, ?, ?)'
-count = 0
-for tweet in umich_tweets:
-	tups = (tweet['id_str'], tweet['text'], userIds[count], tweet['created_at'], tweet['retweet_count'])
-	count = count + 1
-	cur.execute(ex, tups)
+
+for i in range(len(umich_tweets)):
+	tup = (umich_tweets[i]['id'], umich_tweets[i]['text'], umich_tweets[i]['user']['id'], umich_tweets[i]['created_at'], umich_tweets[i]['retweet_count'])
+	cur.execute(ex, tup)
 
 conn.commit()
+
+
+
 
 ## HINT: There's a Tweepy method to get user info that we've looked at before,
 ## so when you have a user id or screenname you can find alllll the info you
