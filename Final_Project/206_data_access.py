@@ -9,11 +9,10 @@ import collections
 import sqlite3 
 import omdb
 
-## Your name: The names of anyone you worked with on this project:
-# Connor Johnston
+# Connor Johnston - Final SI 206 Project
 
 
-##### TWEEPY SETUP CODE: # Authentication information should be in a twitter_info file... 
+##### TWEEPY SETUP CODE: # Authentication information is in a twitter_info file 
 consumer_key = twitter_info.consumer_key
 consumer_secret = twitter_info.consumer_secret
 access_token = twitter_info.access_token
