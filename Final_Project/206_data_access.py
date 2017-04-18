@@ -71,6 +71,8 @@ def get_tweets(key):
 
 umich_tweets = get_tweets('umich')
 
+print(type(umich_tweets))
+
 ## creating the user, tweet, and ombd databases
 
 conn = sqlite3.connect('final.db')
@@ -88,6 +90,8 @@ cur.execute('CREATE TABLE Movies(movie_id TEXT PRIMARY KEY, title TEXT, director
 
 ##insert into the databases
 
+## Will change to a function that accepts a list to make the code more modular
+
 ex = 'INSERT INTO Tweets VALUES (?, ?, ?, ?, ?)'
 
 for i in range(len(umich_tweets)):
@@ -97,6 +101,9 @@ for i in range(len(umich_tweets)):
 conn.commit()
 
 ##test cases
+
+
+## Most test cases are not going to currently run because the code has not been built out.
 class Tests(unittest.TestCase):
 	def test_users_4(self):
 			conn = sqlite3.connect('movies.db')
