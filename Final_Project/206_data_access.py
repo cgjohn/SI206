@@ -100,7 +100,7 @@ for i in range(len(umich_tweets)):
 
 conn.commit()
 
-##test cases
+##test cases (not a complete list of all tests)
 
 
 ## Most test cases are not going to currently run because the code has not been built out.
