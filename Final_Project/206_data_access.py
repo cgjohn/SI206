@@ -129,7 +129,7 @@ def get_movie(title):
 
 #Create a list of dictionaries of three chosen movies
 
-movieNames = ["Star Wars", "Avatar", "Get Out"]
+movieNames = ["Star Wars", "Avatar", "Moana"]
 movieList = []
 
 for movie in movieNames:
@@ -186,11 +186,11 @@ for user in usernames:
 
 ex = 'INSERT INTO Tweets VALUES (?, ?, ?, ?, ?)'
 
-for i in range(len(umich_tweets)):
-	tup = (umich_tweets[i]['id'], umich_tweets[i]['text'], umich_tweets[i]['user']['id'], umich_tweets[i]['created_at'], umich_tweets[i]['retweet_count'])
-	cur.execute(ex, tup)
+for tweets in allTweets:
+	for i in range(len(tweets)):
+		tup = (tweets[i]['id'], tweets[i]['text'], tweets[i]['user']['id'], tweets[i]['created_at'], tweets[i]['retweet_count'])
+		cur.execute(ex, tup)
 
-conn.commit()
 
 
 #Inserting each movie instance into the Database
@@ -243,8 +243,8 @@ movieTweets = {}
 
 # ex = 'INSERT INTO Tweets VALUES (?, ?, ?, ?, ?)'
 
-# for i in range(len(umich_tweets)):
-# 	tup = (umich_tweets[i]['id'], umich_tweets[i]['text'], umich_tweets[i]['user']['id'], umich_tweets[i]['created_at'], umich_tweets[i]['retweet_count'])
+# for i in range(len(tweets)):
+# 	tup = (tweets[i]['id'], tweets[i]['text'], tweets[i]['user']['id'], tweets[i]['created_at'], tweets[i]['retweet_count'])
 # 	cur.execute(ex, tup)
 
 # conn.commit()
