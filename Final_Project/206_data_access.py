@@ -7,7 +7,11 @@ import json
 import requests
 import collections
 import sqlite3 
-import omdb
+import omdb #pip install omdb
+import re 
+from emoji import UNICODE_EMOJI #pip install emoji
+
+
 
 # Connor Johnston - Final SI 206 Project
 
@@ -19,8 +23,7 @@ access_token = twitter_info.access_token
 access_token_secret = twitter_info.access_token_secret
 auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
 auth.set_access_token(access_token, access_token_secret)
-# Set up library to grab stuff from twitter with your authentication, and return
-# it in a JSON format  
+ 
 api = tweepy.API(auth, parser=tweepy.parsers.JSONParser())
 
 ## setting up cache file
@@ -37,7 +40,6 @@ except:
 
 # List of all keys in a Movie
 #Year, Title, Metascore, Poster, Language, Genre, Country, Ratings, Response, Awards, Plot, DVD, Production, Runtime, Type, Rated, Released, Website, Actors, imdbRating, Writer, imdbVotes, Director, BoxOffice, imdbID
-
 
 class Movie(object):
 	movieID = 0
@@ -57,6 +59,10 @@ class Movie(object):
 		self.numLangs = len(movieDict['Language'].split(','))
 		self.year = movieDict['Year']
 
+
+	def main_actor(self):
+		return self.actors[0]
+
 	def __str__(self):
 		return "{} by {} made in {}".format(self.title,self.director,self.year)
 
@@ -68,7 +74,7 @@ conn = sqlite3.connect('final.db')
 cur = conn.cursor()
 
 cur.execute('DROP TABLE IF EXISTS Tweets')
-cur.execute('CREATE TABLE Tweets(tweet_id TEXT PRIMARY KEY, text TEXT, user_id TEXT, time_posted TIMESTAMP, retweets INTEGER)')
+cur.execute('CREATE TABLE Tweets(tweet_id TEXT PRIMARY KEY, text TEXT, user_id TEXT, time_posted TIMESTAMP, retweets INTEGER, movie_id INTEGER)')
 
 cur.execute('DROP TABLE IF EXISTS Users')
 cur.execute('CREATE TABLE Users(user_id TEXT PRIMARY KEY, screen_name TEXT, num_favs INTEGER)')
@@ -86,7 +92,7 @@ def get_tweets(key):
 	if formatted_key in CACHE_DICTION:
 		response_list = CACHE_DICTION[formatted_key]
 	else:
-		response =  api.search(q=key, include_rts=True, count=5)['statuses']
+		response =  api.search(q=key, include_rts=True, count=30)['statuses']
 		CACHE_DICTION[formatted_key] = response
 		cache_file = open(CACHE_FNAME, 'w', encoding = 'utf-8')
 		cache_file.write(json.dumps(CACHE_DICTION))
@@ -125,17 +131,19 @@ def get_movie(title):
 	response = json.loads(response)
 	return response
 
-
+# decide if a char is an emoji
+def is_emoji(s):
+    return s in UNICODE_EMOJI
 
 #Create a list of dictionaries of three chosen movies
 
-movieNames = ["Star Wars", "Avatar", "Moana"]
+movieNames = ["Avengers", "Date Night", "Inception"]
 movieList = []
 
 for movie in movieNames:
 	movieList.append(get_movie(movie))
 
-# Making an instance for each movie and storing each into a list called movieInstances
+# Making an instance for each movie and storing each instance into a list called movieInstances
 
 movieInstances = []
 for i in range(len(movieList)):
@@ -144,23 +152,22 @@ for i in range(len(movieList)):
 
 ## Searching twitter for 5 tweets that mention one actor from each movie and finding all mentioned users in the tweets
 
-#allTweets = a list of lists of dictionaries
-allTweets = []
+allTweets = [] #allTweets is a list of lists of dictionaries
 usernames = []
-tupsList = []#list to be commited to DB
+tupsList = [] #list to be commited to DB
 for each in movieInstances:
 	#creating a tup to commit each movie instance to the DB
-	tup = (each.movieID, each.title, each.director, each.numLangs, each.rating, each.actors[0], each.year)
+	tup = (each.movieID, each.title, each.director, each.numLangs, each.rating, each.main_actor(), each.year)
 	tupsList.append(tup)
-	print("Searching for tweets about " + each.actors[0])
-	tweets = get_tweets(each.actors[0])
+	# print("Searching for tweets about " + each.main_actor())
+	tweets = get_tweets(each.main_actor())
 
 	# print(tweets)
 	# print('\n')
 	allTweets.append(tweets)
 	# print (usernames)
 	screenNames = [tweet['user']['screen_name'] for tweet in tweets]
-	print(screenNames)
+	# print(screenNames)
 	mentions = [tweet['entities']['user_mentions'] for tweet in tweets]
 	for each in screenNames:
 		usernames.append(each)
@@ -184,13 +191,16 @@ for user in usernames:
 
 #Inserting each tweet into the Database
 
-ex = 'INSERT INTO Tweets VALUES (?, ?, ?, ?, ?)'
+ex = 'INSERT INTO Tweets VALUES (?, ?, ?, ?, ?, ?)'
 
+IDTag = 0
+count = 0
 for tweets in allTweets:
+	IDTag = movieInstances[count].movieID
 	for i in range(len(tweets)):
-		tup = (tweets[i]['id'], tweets[i]['text'], tweets[i]['user']['id'], tweets[i]['created_at'], tweets[i]['retweet_count'])
+		tup = (tweets[i]['id'], tweets[i]['text'], tweets[i]['user']['id'], tweets[i]['created_at'], tweets[i]['retweet_count'], IDTag)
 		cur.execute(ex, tup)
-
+	count += 1
 
 
 #Inserting each movie instance into the Database
@@ -203,71 +213,115 @@ for each in tupsList:
 
 conn.commit()
 
-# Creating a list of movies and then making a call to the omdb database to store the results in a movie dictionary with the title being the dictionary key
-# Creating a tweet dictionary that contains the object returned from tweepy when searhing the movie titles from the list made above.
+## Creating a set comprehension of all the words in the gathered tweets
+cur.execute('SELECT text FROM Tweets')
+allText = cur.fetchall()
+
+allWords = []
+for each in allText:
+	sentences = each[0].split(" ")
+	for word in sentences:
+		allWords.append(word)
+
+setCompWords = {word for sentence in allText for word in sentence[0].split(" ")}
 
 
-
-movieTweets = {}
-
-
-
-# for each in movieList:
-# 	actor = each['Actors'].split(",")[0]
-# 	movieTweets[each] = get_tweets(actor)
-
-# print('############')
-# for each in movieTweets:
-# 	print(movieTweets[each][0]['text'])
-# 	print('###########')
+print("There are " + str(len(setCompWords)) + " total different words in the {} tweets found".format(str(len(allText))) )
+print('\n')
+## using regex to find how many lings are shared and thus being able to give a % of tweets that share links
 
 
-# for each in movieList:
-# 	print(each)
-# 	for data in movieList[each]:
-# 		print(data)
-
-# 	print("##################")
-	
-
-# List of all keys in tweet
-# favorite_count, in_reply_to_user_id, id_str, coordinates, lang, geo, in_reply_to_status_id, in_reply_to_user_id_str, place, retweet_count, is_quote_status, retweeted, user, text, created_at, in_reply_to_status_id_str, source, entities, metadata, in_reply_to_screen_name, favorited, contributors, truncated, id, 
+links = []
+for word in allWords:
+	link = re.findall('^http\S+', word);
+	if link:
+		links.append(link)
 
 
+percentLinks = len(links) / len(allText) * 100
+
+print("roughly {0:.2f}".format(percentLinks) + "%" + " of all tweets contained a link (num links / num tweets)")
+print('\n')
+##Finds how many emojis are used using the collections counter
+
+count = collections.Counter()
+
+for word in allWords:
+	count.update(word)
+
+numEmoji = 0
+numChars = 0
+
+for each in count:
+	numChars += count[each] 
+	if is_emoji(each):
+		numEmoji += count[each]
+
+emojiPerc = numEmoji / numChars 
+
+print( str(numEmoji)+" emojis are used which is {0:.6f}% of all characters".format(emojiPerc))
+print('\n')
 
 
+## using the db to get all tweets associated with a movie title
+cur.execute('SELECT Movies.title, Tweets.text FROM Movies INNER JOIN Tweets ON Movies.movie_id = Tweets.movie_id')
+result = cur.fetchall()
 
-##insert into the databases
+#creating a dictionary of movie title as key and tweet as text
+diction = collections.defaultdict(list)
 
-## Will change to a function that accepts a list to make the code more modular
+for tweet in result:
+	diction[tweet[0]].append(tweet[1])
 
-# ex = 'INSERT INTO Tweets VALUES (?, ?, ?, ?, ?)'
+movieTweetDict = dict(diction)
 
-# for i in range(len(tweets)):
-# 	tup = (tweets[i]['id'], tweets[i]['text'], tweets[i]['user']['id'], tweets[i]['created_at'], tweets[i]['retweet_count'])
-# 	cur.execute(ex, tup)
+movieTweetList = []
 
-# conn.commit()
 
-##test cases (not a complete list of all tests)
+for movie in movieInstances:
+	movieTweetList.append(movieTweetDict[movie.title])
+
+avgTweetLength = []
+for movie in movieTweetList:
+	total = 0
+	for each in movie:
+		total += len(each)
+	avgTweetLength.append(total / len(movie))
+
+longestTweetsIndex = [i for i,x in enumerate(avgTweetLength) if x == max(avgTweetLength)][0]
+
+longestTweets = movieInstances[longestTweetsIndex].title
+
+print("{} has the longest tweets with an average length of {} characters".format(longestTweets, max(avgTweetLength)))
+print('\n')
+
+## Finds the tweet with the most retweets and  returns movie, actor, and tweet
+cur.execute('SELECT Tweets.text, Movies.actor, Movies.title, MAX(Tweets.retweets)  FROM Movies INNER JOIN Tweets ON Movies.movie_id = Tweets.movie_id')
+mostPopTweet = cur.fetchall()[0]
+
+print('The most popular tweet was "{}" with {} retweets mentioning {} who was in the movie {}'.format(mostPopTweet[0], mostPopTweet[3], mostPopTweet[1], mostPopTweet[2]))
+
+
 conn.close()
 
-## Most test cases are not going to currently run because the code has not been built out.
+##Test cases
 class Tests(unittest.TestCase):
-	def test_users_4(self):
-			conn = sqlite3.connect('movies.db')
+	def test_movie_entries(self):
+			conn = sqlite3.connect('final.db')
 			cur = conn.cursor()
-			cur.execute('SELECT * FROM Movies');
+			cur.execute('SELECT Movies.title FROM Movies');
 			result = cur.fetchall()
+			print(len(result))
 			self.assertTrue(len(result)==len(movieNames),"Testing that there are same number of movies as passed in")
 			conn.close()
 
-	def test_umich_caching(self):
-			fstr = open("final_cache.json","r").read()
-			self.assertTrue("movie" in fstr)
+	def test_caching(self):
+			fstr = open("final_cache.json","r")
+			self.assertTrue(movieInstances[0].title in fstr.read())
+			fstr.close()
 
 	def test_num_tweets(self):
-		conn = sqlite3.connect('tweets.db')
+		conn = sqlite3.connect('final.db')
 		cur = conn.cursor()
 		cur.execute('SELECT * FROM Tweets');
 		result = cur.fetchall()
@@ -275,7 +329,7 @@ class Tests(unittest.TestCase):
 		conn.close()
 
 	def test_nume_users(self):
-		conn = sqlite3.connect('project3_tweets.db')
+		conn = sqlite3.connect('final.db')
 		cur = conn.cursor()
 		cur.execute('SELECT * FROM Users');
 		result = cur.fetchall()
@@ -283,15 +337,15 @@ class Tests(unittest.TestCase):
 		conn.close()
 
 	def test_mov_cols(self):
-		conn = sqlite3.connect('movies.db')
+		conn = sqlite3.connect('final.db')
 		cur = conn.cursor()
 		cur.execute('SELECT * FROM Movies');
 		result = cur.fetchall()
-		self.assertTrue(len(result[0])==6,"Testing that there are 6 columns in the movies database")
+		self.assertTrue(len(result[0])==7,"Testing that there are 7 columns in the movies database")
 		conn.close()
 
 	def test_user_cols(self):
-		conn = sqlite3.connect('users.db')
+		conn = sqlite3.connect('final.db')
 		cur = conn.cursor()
 		cur.execute('SELECT * FROM users');
 		result = cur.fetchall()
@@ -299,15 +353,23 @@ class Tests(unittest.TestCase):
 		conn.close()
 
 	def test_tweet_cols(self):
-		conn = sqlite3.connect('tweets.db')
+		conn = sqlite3.connect('final.db')
 		cur = conn.cursor()
 		cur.execute('SELECT * FROM tweets');
 		result = cur.fetchall()
-		self.assertTrue(len(result[0])==6,"Testing that there are 6 columns in the Users database")
+		self.assertTrue(len(result[0])==6,"Testing that there are 6 columns in the Tweets database")
 		conn.close()
 
-	def test_common_char2(self):
-		self.assertTrue(type(most_common_char)=="","Testing that most common word is a string")
+	def test_main_actor(self):
+		self.assertTrue(movieInstances[0].main_actor() == movieInstances[0].actors[0])
 
-# if __name__ == "__main__":
-# 	unittest.main(verbosity=2)
+	def test_main_actor2(self):
+		self.assertTrue(movieInstances[0].main_actor() != movieInstances[1].actors[0])
+
+	def test__str__(self):
+		self.assertTrue(movieInstances[0].__str__(), "The Avengers by Josh Whedon made in 2012")
+
+	def test__str__2(self):
+		self.assertTrue(type(movieInstances[0].__str__()), "")
+if __name__ == "__main__":
+	unittest.main(verbosity=2)
