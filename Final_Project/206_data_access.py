@@ -202,7 +202,6 @@ for tweets in allTweets:
 		cur.execute(ex, tup)
 	count += 1
 
-
 #Inserting each movie instance into the Database
 
 movieEx = 'INSERT INTO Movies VALUES (?,?,?,?,?,?,?)'
@@ -306,19 +305,36 @@ conn.close()
 
 ##Test cases
 class Tests(unittest.TestCase):
-	def test_movie_entries(self):
-			conn = sqlite3.connect('final.db')
-			cur = conn.cursor()
-			cur.execute('SELECT Movies.title FROM Movies');
-			result = cur.fetchall()
-			print(len(result))
-			self.assertTrue(len(result)==len(movieNames),"Testing that there are same number of movies as passed in")
-			conn.close()
 
-	def test_caching(self):
-			fstr = open("final_cache.json","r")
-			self.assertTrue(movieInstances[0].title in fstr.read())
-			fstr.close()
+	def test_movie_caching(self):
+		fstr = open("final_cache.json","r")
+		self.assertTrue(movieInstances[0].title in fstr.read())
+		fstr.close()
+
+	def test_tweet_cache(self):
+		fstr = open("final_cache.json","r")
+		self.assertTrue('twitter_Leonardo DiCaprio' in fstr.read())
+		fstr.close()
+
+	def test_tweet_cache(self):
+		fstr = open("final_cache.json","r")
+		self.assertTrue(uniqueUsers[0] in fstr.read())
+		fstr.close()
+
+	def test_is_emoji(self):
+		self.assertTrue(is_emoji('\U0001F600'))
+
+	def test_is_emoji1(self):
+		self.assertFalse(is_emoji('hello'))
+
+	def test_movie_entries(self):
+		conn = sqlite3.connect('final.db')
+		cur = conn.cursor()
+		cur.execute('SELECT Movies.title FROM Movies');
+		result = cur.fetchall()
+		print(len(result))
+		self.assertTrue(len(result)==len(movieNames),"Testing that there are same number of movies as passed in")
+		conn.close()
 
 	def test_num_tweets(self):
 		conn = sqlite3.connect('final.db')
@@ -360,6 +376,8 @@ class Tests(unittest.TestCase):
 		self.assertTrue(len(result[0])==6,"Testing that there are 6 columns in the Tweets database")
 		conn.close()
 
+
+class MovieTestMethods(unittest.TestCase):
 	def test_main_actor(self):
 		self.assertTrue(movieInstances[0].main_actor() == movieInstances[0].actors[0])
 
@@ -371,5 +389,7 @@ class Tests(unittest.TestCase):
 
 	def test__str__2(self):
 		self.assertTrue(type(movieInstances[0].__str__()), "")
+
+
 if __name__ == "__main__":
 	unittest.main(verbosity=2)
