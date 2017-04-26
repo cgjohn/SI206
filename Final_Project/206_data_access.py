@@ -301,6 +301,11 @@ with open('results.txt', 'w') as f:
 		print(each)
 
 	print('\n')
+	print('Main actors in respective order:\n')
+	for each in movieInstances:
+		print(each.main_actor())
+
+	print('\n')
 	print('#####################################################')
 	print("STATISTICS ON TWEETS ABOUT EACH MOVIE'S LEADING ACTOR")
 	print('#####################################################')

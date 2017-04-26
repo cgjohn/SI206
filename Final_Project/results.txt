@@ -10,21 +10,28 @@ Date Night by Shawn Levy made in 2010
 Inception by Christopher Nolan made in 2010
 
 
+Main actors in respective order:
+
+Robert Downey Jr.
+Steve Carell
+Leonardo DiCaprio
+
+
 #####################################################
 STATISTICS ON TWEETS ABOUT EACH MOVIE'S LEADING ACTOR
 #####################################################
-•There are 562 total different words in the 90 tweets found
+•There are 483 total different words in the 86 tweets found
 
 
-•Roughly 76.67% of all tweets contained a link (num links / num tweets)
+•Roughly 73.26% of all tweets contained a link (num links / num tweets)
 
 
-•13 emojis are used which is 0.001646% of all characters
+•11 emojis are used which is 0.001537% of all characters
 
 
-•The actor Steve Carell has the longest tweets with an average length of 105 characters
+•The actor Steve Carell has the longest tweets with an average length of 106 characters
 
 
-•The most popular tweet was "RT @myboycrushs: If Leonardo DiCaprio and Justin Bieber had a son 😍 https://t.co/M2ccdu8QVH" with 22876 retweets mentioning Leonardo DiCaprio who was in the movie Inception
+•The most popular tweet was "RT @Fala7i_King: If Leonardo Dicaprio was Arab. https://t.co/wTfv30id7d" with 1665 retweets mentioning Leonardo DiCaprio who was in the movie Inception
 
 
