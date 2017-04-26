@@ -2,10 +2,11 @@ import unittest
 import itertools 
 import collections 
 import tweepy 
-import twitter_info
+import twitter_info #external file needed to run the program; contains twitter api keys & tokens
+import sys
+import time
 import json
 import requests
-import collections
 import sqlite3 
 import omdb #pip install omdb
 import re 
@@ -38,9 +39,7 @@ try:
 except:
 	CACHE_DICTION = {}
 
-# List of all keys in a Movie
-#Year, Title, Metascore, Poster, Language, Genre, Country, Ratings, Response, Awards, Plot, DVD, Production, Runtime, Type, Rated, Released, Website, Actors, imdbRating, Writer, imdbVotes, Director, BoxOffice, imdbID
-
+#Movie class which is used to store each movie for reference throughout
 class Movie(object):
 	movieID = 0
 	title = ""
@@ -84,7 +83,7 @@ cur.execute('CREATE TABLE Movies(movie_id TEXT PRIMARY KEY, title TEXT, director
 
 
 
-# Defining the get functions for both API's here:
+# Defining the get functions for both API's along with any other funtions used throughout the program. A brief description is given at the start of each function:
 
 # Sends a request to twitter for tweets containing a given key word
 def get_tweets(key):
@@ -131,13 +130,13 @@ def get_movie(title):
 	response = json.loads(response)
 	return response
 
-# decide if a char is an emoji
-def is_emoji(s):
-    return s in UNICODE_EMOJI
+# decides if a character is an emoji
+def is_emoji(c):
+    return c in UNICODE_EMOJI
 
-#Create a list of dictionaries of three chosen movies
-
-movieNames = ["Avengers", "Date Night", "Inception"]
+#Creating a list of dictionaries for the three chosen movies
+#movieNames = ["Logan", "Happy Gilmore", "Hangover", "Superman"]
+movieNames = ["Avengers", "Date Night", "Inception"]# My chosen movies
 movieList = []
 
 for movie in movieNames:
@@ -159,15 +158,9 @@ for each in movieInstances:
 	#creating a tup to commit each movie instance to the DB
 	tup = (each.movieID, each.title, each.director, each.numLangs, each.rating, each.main_actor(), each.year)
 	tupsList.append(tup)
-	# print("Searching for tweets about " + each.main_actor())
 	tweets = get_tweets(each.main_actor())
-
-	# print(tweets)
-	# print('\n')
 	allTweets.append(tweets)
-	# print (usernames)
 	screenNames = [tweet['user']['screen_name'] for tweet in tweets]
-	# print(screenNames)
 	mentions = [tweet['entities']['user_mentions'] for tweet in tweets]
 	for each in screenNames:
 		usernames.append(each)
@@ -175,8 +168,7 @@ for each in movieInstances:
 		for m in mention:
 			usernames.append(m['screen_name'])
 
-#Inserting the unique users into the database
-
+#Inserting and finding the unique users into the database
 userEx = 'INSERT INTO Users VALUES (?, ?, ?)'
 
 userIds = []
@@ -193,7 +185,7 @@ for user in usernames:
 
 ex = 'INSERT INTO Tweets VALUES (?, ?, ?, ?, ?, ?)'
 
-IDTag = 0
+IDTag = 0 #Movie ID holder
 count = 0
 for tweets in allTweets:
 	IDTag = movieInstances[count].movieID
@@ -203,6 +195,7 @@ for tweets in allTweets:
 	count += 1
 
 #Inserting each movie instance into the Database
+# The movie tup was created in line 157 to not rewrite code
 
 movieEx = 'INSERT INTO Movies VALUES (?,?,?,?,?,?,?)'
 
@@ -225,11 +218,8 @@ for each in allText:
 setCompWords = {word for sentence in allText for word in sentence[0].split(" ")}
 
 
-print("There are " + str(len(setCompWords)) + " total different words in the {} tweets found".format(str(len(allText))) )
-print('\n')
-## using regex to find how many lings are shared and thus being able to give a % of tweets that share links
 
-
+## using regex to find how many links are shared and thus being able to give an estimated percentage of tweets that share links
 links = []
 for word in allWords:
 	link = re.findall('^http\S+', word);
@@ -239,10 +229,7 @@ for word in allWords:
 
 percentLinks = len(links) / len(allText) * 100
 
-print("roughly {0:.2f}".format(percentLinks) + "%" + " of all tweets contained a link (num links / num tweets)")
-print('\n')
 ##Finds how many emojis are used using the collections counter
-
 count = collections.Counter()
 
 for word in allWords:
@@ -258,15 +245,14 @@ for each in count:
 
 emojiPerc = numEmoji / numChars 
 
-print( str(numEmoji)+" emojis are used which is {0:.6f}% of all characters".format(emojiPerc))
-print('\n')
+
 
 
 ## using the db to get all tweets associated with a movie title
 cur.execute('SELECT Movies.title, Tweets.text FROM Movies INNER JOIN Tweets ON Movies.movie_id = Tweets.movie_id')
 result = cur.fetchall()
 
-#creating a dictionary of movie title as key and tweet as text
+#creating a dictionary with movie title as key and tweet text as value
 diction = collections.defaultdict(list)
 
 for tweet in result:
@@ -280,6 +266,7 @@ movieTweetList = []
 for movie in movieInstances:
 	movieTweetList.append(movieTweetDict[movie.title])
 
+#Finding the average tweet length for all three movies
 avgTweetLength = []
 for movie in movieTweetList:
 	total = 0
@@ -289,19 +276,44 @@ for movie in movieTweetList:
 
 longestTweetsIndex = [i for i,x in enumerate(avgTweetLength) if x == max(avgTweetLength)][0]
 
-longestTweets = movieInstances[longestTweetsIndex].title
+longestTweets = movieInstances[longestTweetsIndex].main_actor()
 
-print("{} has the longest tweets with an average length of {} characters".format(longestTweets, max(avgTweetLength)))
-print('\n')
 
-## Finds the tweet with the most retweets and  returns movie, actor, and tweet
+
+## Finds the tweet with the most retweets and returns movie, actor, tweet text, and tweet retweets
 cur.execute('SELECT Tweets.text, Movies.actor, Movies.title, MAX(Tweets.retweets)  FROM Movies INNER JOIN Tweets ON Movies.movie_id = Tweets.movie_id')
 mostPopTweet = cur.fetchall()[0]
 
-print('The most popular tweet was "{}" with {} retweets mentioning {} who was in the movie {}'.format(mostPopTweet[0], mostPopTweet[3], mostPopTweet[1], mostPopTweet[2]))
 
 
 conn.close()
+
+with open('results.txt', 'w') as f:
+	sys.stdout = f
+    
+	#printing all of the results
+	print('######################################')
+	print("TWITTER & OMDB SUMMARY")
+	print (time.strftime("%d/%m/%Y"))
+	print('######################################\n')
+	print('Movies:' + ('\n'))
+	for each in movieInstances:
+		print(each)
+
+	print('\n')
+	print('#####################################################')
+	print("STATISTICS ON TWEETS ABOUT EACH MOVIE'S LEADING ACTOR")
+	print('#####################################################')
+	print("•There are " + str(len(setCompWords)) + " total different words in the {} tweets found".format(str(len(allText))) )
+	print('\n')
+	print("•Roughly {0:.2f}".format(percentLinks) + "%" + " of all tweets contained a link (num links / num tweets)")
+	print('\n')
+	print( "•" + str(numEmoji)+" emojis are used which is {0:.6f}% of all characters".format(emojiPerc))
+	print('\n')
+	print("•The actor {} has the longest tweets with an average length of {} characters".format(longestTweets, int(max(avgTweetLength))))
+	print('\n')
+	print('•The most popular tweet was "{}" with {} retweets mentioning {} who was in the movie {}'.format(mostPopTweet[0], mostPopTweet[3], mostPopTweet[1], mostPopTweet[2]))
+	print('\n')
 
 ##Test cases
 class Tests(unittest.TestCase):
@@ -385,11 +397,11 @@ class MovieTestMethods(unittest.TestCase):
 		self.assertTrue(movieInstances[0].main_actor() != movieInstances[1].actors[0])
 
 	def test__str__(self):
-		self.assertTrue(movieInstances[0].__str__(), "The Avengers by Josh Whedon made in 2012")
+		self.assertEquals(movieInstances[0].__str__(), "{} by {} made in {}".format(movieInstances[0].title, movieInstances[0].director, movieInstances[0].year))
 
 	def test__str__2(self):
 		self.assertTrue(type(movieInstances[0].__str__()), "")
 
 
-if __name__ == "__main__":
-	unittest.main(verbosity=2)
+# if __name__ == "__main__":
+# 	unittest.main(verbosity=2)
